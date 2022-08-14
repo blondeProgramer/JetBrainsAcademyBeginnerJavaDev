@@ -1,0 +1,124 @@
+package cinema;
+import java.util.Scanner;
+
+public class Cinema {
+    public static void showCinema(char[][] seats) {
+        System.out.println("Cinema:");
+        for(int i = 0; i <= seats.length; i++) {
+            for(int j = 0; j <= seats[0].length; j++) {
+                if(i == 0) {
+                    if (j == 0){
+                        System.out.print(" ");
+                    }
+                    else {
+                        System.out.print(" " + j);
+                    }
+                }
+                else {
+                    if (j == 0) {
+                        System.out.print(i);
+                    }
+                    else {
+                        System.out.print(" " + seats[i-1][j-1]);
+                    }
+                }
+            }
+            System.out.print("\n");
+        }
+    }
+    public static void buyTicket(char[][] seats) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter a row number:");
+        int numRow = scanner.nextInt();
+        numRow--;
+        System.out.println("Enter a seat number in that row:");
+        int numSeat = scanner.nextInt();
+        numSeat--;
+        if (numRow >= seats.length || numRow < 0 || numSeat >= seats[0].length || numSeat < 0) {
+            System.out.println("Wrong input!");
+            return;
+        }
+        if (seats[numRow][numSeat] == 'B') {
+            System.out.println("That ticket has already been purchased!\n");
+            buyTicket(seats);
+            return;
+        }
+        int price = ticketPrice(seats, numRow, numSeat);
+        
+        seats[numRow][numSeat] = 'B';
+        System.out.println("Ticket price: $" + price);
+    }
+    public static int ticketPrice(char[][] seats, int numRow, int numSeat) {
+        if (seats.length * seats[0].length <= 60) {
+            return 10;
+        } else {
+            if (numRow >= seats.length / 2) {
+                return 8;
+            } else {
+                return 10;
+            } 
+        }
+    }
+    public static void showStatictic(char[][] seats) {
+        int totalPrice = 0;
+        int nowTotal = 0;
+        int numOrders = 0;
+        int allSeats = seats.length * seats[0].length;
+        double percentage = 0;
+        if (allSeats <= 60) {
+            totalPrice = allSeats * 10;
+        } else {
+            totalPrice = (seats.length / 2) * seats[0].length * 10 + (seats.length / 2 + seats.length % 2) * seats[0].length * 8;
+        }
+        for (int i = 0; i < seats.length; i++) {
+            for (int j = 0; j < seats[0].length; j++) {
+                if (seats[i][j] == 'B') {
+                    nowTotal += ticketPrice(seats, i, j);
+                    numOrders++;
+                }
+            }
+        }
+        if (numOrders > 0) {
+            percentage = Double.valueOf(numOrders) / allSeats * 100;
+        }
+        System.out.printf("Number of purchased tickets: %d", numOrders);
+        System.out.printf("\nPercentage: %.2f%%", percentage);
+        System.out.printf("\nCurrent income: $%d", nowTotal);
+        System.out.printf("\nTotal income: $%d", totalPrice);
+    
+    }
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter the number of rows:");
+        int numRows = scanner.nextInt();
+        System.out.println("Enter the number of seats in each row:");
+        int numSeats = scanner.nextInt();
+        char seats[][] = new char[numRows][numSeats];
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < numSeats; j++) {
+                seats[i][j] = 'S';
+            }
+        }
+        int choise;
+        do {
+            System.out.println("\n1. Show the seats\n2. Buy a ticket\n3. Statistics\n0. Exit\n");
+            choise = scanner.nextInt();
+            switch (choise) {
+                case 1:
+                    showCinema(seats);
+                    break;
+                case 2:
+                    buyTicket(seats);
+                    break;
+                case 3:
+                    showStatictic(seats);
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("It's something wrong!");
+                    break;
+            }
+        } while (choise != 0);
+    }
+}
